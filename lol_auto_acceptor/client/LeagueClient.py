@@ -1,20 +1,25 @@
 import requests
 import os
 import time
+import urllib3
 from client.ChampSelect import ChampSelect
+from urllib3.exceptions import InsecureRequestWarning
 
 default_path = r"C:\Riot Games\League of Legends"
 cert_path = r"cert/riotgames.pem"  # certification for riot self signed cerification
 
+# disable insecure request (verify=False) warning
+urllib3.disable_warnings(InsecureRequestWarning)
+
 
 class LeagueClient:
     def __init__(self, path=default_path, **ban_pick_data):
-        self.path:str = path
-        self.key:str = None
-        self.url:str = None
-        self.port:str = None
-        self.password:str = None
-        self.champ_select = ChampSelect(self,**ban_pick_data)
+        self.path: str = path
+        self.key: str = None
+        self.url: str = None
+        self.port: str = None
+        self.password: str = None
+        self.champ_select = ChampSelect(self, **ban_pick_data)
 
     def _load_lockfile(self) -> tuple[str, str]:
         """
@@ -39,12 +44,11 @@ class LeagueClient:
         Assign parameters neccessary for an HTTP request to the class
         """
         if not (data := self._load_lockfile()):
-            if reconnect:
+            if not reconnect:
                 print("Client not opened")
                 return False
             else:
                 return False
-        
 
         self.port, self.password = data
         self.url = self._build_url(self.port)
@@ -75,13 +79,13 @@ class LeagueClient:
                         return requests.get(
                             f"{self.url}{api_dir}",
                             auth=("riot", self.password),
-                            verify=cert_path,
+                            verify=False,
                         )
                     case "POST":
                         return requests.post(
                             f"{self.url}{api_dir}",
                             auth=("riot", self.password),
-                            verify=cert_path,
+                            verify=False,
                             data=data,
                         )
                     case _:
