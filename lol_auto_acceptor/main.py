@@ -1,6 +1,6 @@
 from client.LeagueClient import LeagueClient
 import sys
-import ssl
+
 if __name__ == "__main__":
     try:
         while True:

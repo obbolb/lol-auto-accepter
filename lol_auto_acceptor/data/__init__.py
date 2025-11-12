@@ -1,0 +1,1 @@
+from lol_auto_acceptor.data.get_game_constants import get_champ_id
